@@ -17,7 +17,7 @@
 // Gemini API 엔드포인트 주소
 // {API_KEY} 부분은 실제 API 키로 교체됨
 const GEMINI_API_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview:generateContent';
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent';
 
 // localStorage에 API 키를 저장할 때 사용하는 키 이름
 const API_KEY_STORAGE_KEY = 'phylosophy_gemini_api_key';
