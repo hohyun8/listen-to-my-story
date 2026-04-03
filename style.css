@@ -1,0 +1,1032 @@
+/* ================================================================
+   style.css - "내 이야기를 들어줘!" AI 심리 상담 웹사이트 스타일
+
+   색상 팔레트 (심리 상담 분위기 - 따뜻하고 부드러운 톤):
+   - 메인 그린: #4a7c59 (차분하고 안정적인 숲 녹색)
+   - 라이트 그린: #e8f5e9 (배경에 쓰이는 연한 녹색)
+   - 웜 베이지: #faf7f2 (페이지 배경 - 따뜻한 아이보리)
+   - 소프트 피치: #fff3e0 (사용자 메시지 버블)
+   - 미디엄 그레이: #6b7280 (보조 텍스트)
+   ================================================================ */
+
+
+/* ----------------------------------------------------------------
+   CSS 변수 선언 (색상, 크기 등을 변수로 관리하면 수정이 편함)
+   ---------------------------------------------------------------- */
+:root {
+  /* 주요 색상 변수 */
+  --color-primary: #4a7c59;         /* 메인 녹색 - 버튼, 강조 요소 */
+  --color-primary-light: #6a9c79;   /* 밝은 녹색 - 호버 효과 */
+  --color-primary-pale: #e8f5e9;    /* 매우 연한 녹색 - AI 메시지 배경 */
+  --color-bg-page: #faf7f2;         /* 페이지 전체 배경 - 따뜻한 아이보리 */
+  --color-bg-card: #ffffff;         /* 카드/섹션 배경 - 흰색 */
+  --color-user-bubble: #fff3e0;     /* 사용자 메시지 버블 배경 - 연한 주황 */
+  --color-user-border: #ffe0b2;     /* 사용자 버블 테두리 */
+  --color-ai-bubble: #f0f7f1;       /* AI 메시지 버블 배경 - 연한 녹색 */
+  --color-ai-border: #c8e6c9;       /* AI 버블 테두리 */
+  --color-text-main: #2d3748;       /* 주요 텍스트 - 진한 회색 */
+  --color-text-sub: #6b7280;        /* 보조 텍스트 - 중간 회색 */
+  --color-text-placeholder: #9ca3af;/* 플레이스홀더 텍스트 */
+  --color-border: #e5e7eb;          /* 테두리 색상 */
+  --color-shadow: rgba(0, 0, 0, 0.08); /* 그림자 색상 */
+  --color-error: #dc2626;           /* 에러 메시지 빨간색 */
+  --color-success: #16a34a;         /* 성공 메시지 녹색 */
+
+  /* 크기/간격 변수 */
+  --border-radius-sm: 8px;
+  --border-radius-md: 16px;
+  --border-radius-lg: 24px;
+  --border-radius-bubble: 20px;
+
+  /* 전환 애니메이션 속도 */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.4s ease;
+
+  /* 최대 너비 */
+  --max-width: 720px;
+}
+
+
+/* ----------------------------------------------------------------
+   스크린리더 전용 숨김 텍스트 클래스
+   시각적으로는 화면에 보이지 않지만 스크린리더는 읽을 수 있음
+   접근성(a11y)을 위해 필수적인 패턴
+   ---------------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ----------------------------------------------------------------
+   기본 리셋 및 박스 모델 설정
+   ---------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  /* 모든 요소의 크기 계산 방식을 border-box로 통일 */
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* HTML과 body 전체 높이 설정 */
+html, body {
+  height: 100%;
+}
+
+/* 전역 부드러운 스크롤 동작 설정 */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  /* 기본 폰트 설정 - 한국어에 적합한 폰트 스택 */
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕',
+               -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-page);
+  /* 텍스트 렌더링 최적화 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* 모바일에서 텍스트 크기 자동 조정 방지 */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ----------------------------------------------------------------
+   전역 포커스 스타일 - 키보드 탐색 시 명확하게 표시
+   마우스 사용 시에는 보이지 않고, 키보드 탐색 시에만 표시됨
+   ---------------------------------------------------------------- */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 마우스 클릭 시에는 포커스 링 숨기기 (시각적으로 더 깔끔함) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* ----------------------------------------------------------------
+   페이지 전체 래퍼 - 최대 너비 제한 및 중앙 정렬
+   ---------------------------------------------------------------- */
+.page-wrapper {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* 살짝 그림자 효과로 카드처럼 보이게 */
+  box-shadow: 0 0 40px rgba(74, 124, 89, 0.08);
+  background-color: var(--color-bg-card);
+}
+
+
+/* ================================================================
+   헤더 스타일 - 상담사 소개 영역
+   ================================================================ */
+.header {
+  /* 그라디언트 배경 - 녹색 계열의 부드러운 그라디언트 */
+  background: linear-gradient(135deg, #2d5a3d 0%, #4a7c59 50%, #6a9c79 100%);
+  color: white;
+  padding: 28px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  /* 헤더 하단에 부드러운 경계선 */
+  border-bottom: 3px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 헤더 배경에 장식적 원형 요소 추가 */
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  right: 40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
+/* 상담사 아바타 원형 배경 */
+.counselor-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* 아바타가 줄어들지 않도록 */
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  /* 살짝 떠있는 느낌의 그림자 */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  /* 천천히 움직이는 애니메이션 */
+  animation: avatarFloat 3s ease-in-out infinite;
+}
+
+/* 아바타 이모지 크기 */
+.avatar-emoji {
+  font-size: 36px;
+}
+
+/* 아바타 부드럽게 위아래로 흔들리는 애니메이션 */
+@keyframes avatarFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+/* 상담사 이름 및 설명 텍스트 영역 */
+.counselor-info {
+  flex: 1;
+}
+
+.site-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  letter-spacing: -0.3px;
+}
+
+.counselor-name {
+  font-size: 13px;
+  opacity: 0.85;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.counselor-description {
+  font-size: 13px;
+  opacity: 0.8;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+/* 온라인 상태 배지 */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 상태 표시 초록 점 - 깜박이는 애니메이션 */
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #69f0ae;
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 6px rgba(105, 240, 174, 0.7);
+}
+
+/* 상태 점 깜박임 애니메이션 */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.status-text {
+  opacity: 0.95;
+}
+
+
+/* ================================================================
+   메인 콘텐츠 영역
+   ================================================================ */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+
+/* ================================================================
+   API 키 설정 섹션 스타일
+   ================================================================ */
+.api-key-section {
+  background-color: #fffbf5;
+  border-bottom: 1px solid var(--color-border);
+  transition: var(--transition-normal);
+}
+
+.api-key-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+.api-key-icon {
+  font-size: 18px;
+}
+
+.api-key-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  flex: 1;
+}
+
+/* 접기/펼치기 토글 버튼 */
+.toggle-api-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-sub);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: var(--transition-fast);
+  line-height: 1;
+}
+
+.toggle-api-btn:hover {
+  background-color: var(--color-border);
+}
+
+/* API 키 접기/펼치기 애니메이션 */
+.api-key-body {
+  padding: 0 20px 16px;
+  overflow: hidden;
+  max-height: 300px; /* 펼쳐진 상태의 최대 높이 */
+  transition: max-height var(--transition-slow), padding var(--transition-slow);
+}
+
+/* 접힌 상태 - JavaScript에서 이 클래스를 토글함 */
+.api-key-body.collapsed {
+  max-height: 0;
+  padding-bottom: 0;
+}
+
+.api-key-guide {
+  font-size: 13px;
+  color: var(--color-text-sub);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* API 키 발급 링크 */
+.api-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.api-link:hover {
+  text-decoration: underline;
+}
+
+/* API 키 입력 그룹 (입력창 + 보이기 버튼) */
+.api-key-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* API 키 입력창 스타일 */
+.api-key-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 13px;
+  font-family: monospace; /* API 키는 고정폭 폰트로 */
+  color: var(--color-text-main);
+  background-color: white;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.api-key-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.12);
+}
+
+/* 키 보이기/숨기기 버튼 */
+.show-key-btn {
+  padding: 10px 12px;
+  background: white;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-size: 16px;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.show-key-btn:hover {
+  background-color: var(--color-primary-pale);
+  border-color: var(--color-primary);
+}
+
+/* API 키 액션 버튼 그룹 */
+.api-key-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 저장 버튼 */
+.save-api-btn {
+  padding: 8px 20px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.save-api-btn:hover {
+  background-color: var(--color-primary-light);
+  transform: translateY(-1px);
+}
+
+.save-api-btn:active {
+  transform: translateY(0);
+  background-color: #3d6b4a;
+}
+
+/* 삭제 버튼 */
+.delete-api-btn {
+  padding: 8px 16px;
+  background-color: white;
+  color: var(--color-text-sub);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.delete-api-btn:hover {
+  background-color: #fff5f5;
+  border-color: #fca5a5;
+  color: var(--color-error);
+}
+
+.delete-api-btn:active {
+  background-color: #fee2e2;
+  transform: translateY(1px);
+}
+
+/* API 상태 메시지 */
+.api-status-message {
+  margin-top: 8px;
+  font-size: 12px;
+  min-height: 18px;
+  transition: opacity var(--transition-fast);
+}
+
+.api-status-message.success {
+  color: var(--color-success);
+}
+
+.api-status-message.error {
+  color: var(--color-error);
+}
+
+
+/* ================================================================
+   채팅 섹션 스타일
+   ================================================================ */
+.chat-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* flex 자식이 넘치지 않도록 */
+  position: relative;
+}
+
+/* 채팅 메시지 표시 영역 */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto; /* 메시지가 많아지면 스크롤 */
+  padding: 20px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* 최소 높이 설정으로 웰컴 메시지가 보이도록 */
+  min-height: 300px;
+  max-height: calc(100vh - 380px); /* 화면 높이에서 헤더, 입력창 등 제외 */
+}
+
+/* 스크롤바 스타일 - 크롬/엣지/사파리 (웹킷 기반 브라우저) */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;   /* 평소에는 연한 회색 */
+  border-radius: 3px;
+  transition: background-color var(--transition-fast);
+}
+
+/* 스크롤바 위에 마우스를 올리면 더 진한 색으로 */
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+/* 파이어폭스용 스크롤바 스타일 */
+.chat-messages {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+
+/* ----------------------------------------------------------------
+   웰컴 메시지 스타일
+   ---------------------------------------------------------------- */
+.welcome-message {
+  text-align: center;
+  padding: 32px 20px;
+  animation: fadeInUp 0.5s ease;
+}
+
+.welcome-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  animation: gentleRotate 4s ease-in-out infinite;
+}
+
+/* 꽃 아이콘 부드럽게 회전 */
+@keyframes gentleRotate {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+.welcome-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+}
+
+.welcome-text {
+  font-size: 14px;
+  color: var(--color-text-sub);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+/* 빠른 시작 버튼 컨테이너 */
+.quick-start-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* 빠른 시작 버튼 개별 스타일 */
+.quick-btn {
+  padding: 8px 16px;
+  background-color: var(--color-primary-pale);
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-ai-border);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  /* 터치 타깃 최소 44px 보장 (모바일 접근성) */
+  min-height: 36px;
+}
+
+.quick-btn:hover {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 124, 89, 0.25);
+}
+
+/* 빠른 시작 버튼 클릭(누르는 순간) 상태 */
+.quick-btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 1px 4px rgba(74, 124, 89, 0.2);
+  background-color: #3d6b4a;  /* 호버보다 약간 더 진한 색 */
+  color: white;
+}
+
+
+/* ----------------------------------------------------------------
+   채팅 메시지 버블 스타일
+   ---------------------------------------------------------------- */
+
+/* 모든 메시지 행 기본 스타일 */
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  /* 메시지가 새로 추가될 때 아래에서 올라오는 애니메이션 */
+  animation: fadeInUp 0.3s ease;
+}
+
+/* 아래에서 위로 올라오는 페이드인 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 사용자 메시지 행 - 오른쪽 정렬 */
+.message-row.user {
+  flex-direction: row-reverse;
+}
+
+/* AI 메시지 행 - 왼쪽 정렬 (기본값) */
+.message-row.ai {
+  flex-direction: row;
+}
+
+/* 메시지 발신자 아바타 (AI 메시지에만 표시) */
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(74, 124, 89, 0.25);
+}
+
+/* 메시지 버블과 시간 표시를 묶는 컨테이너 */
+.message-content {
+  max-width: 75%; /* 버블이 너무 넓어지지 않도록 최대 너비 제한 */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 사용자 메시지 내용 - 오른쪽 정렬 */
+.message-row.user .message-content {
+  align-items: flex-end;
+}
+
+/* AI 메시지 내용 - 왼쪽 정렬 */
+.message-row.ai .message-content {
+  align-items: flex-start;
+}
+
+/* 발신자 이름 표시 (AI 이름) */
+.message-sender {
+  font-size: 11px;
+  color: var(--color-text-sub);
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+/* 메시지 버블 기본 스타일 */
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: var(--border-radius-bubble);
+  font-size: 14px;
+  line-height: 1.75;          /* 가독성을 위해 줄 간격을 약간 넓힘 */
+  word-break: break-word;     /* 긴 단어가 버블을 넘치지 않도록 */
+  white-space: pre-wrap;      /* 줄바꿈 유지 */
+  letter-spacing: 0.01em;     /* 자간을 미세하게 늘려 가독성 향상 */
+}
+
+/* 사용자 메시지 버블 - 따뜻한 주황/베이지 계열 */
+.message-row.user .message-bubble {
+  background-color: var(--color-user-bubble);
+  border: 1px solid var(--color-user-border);
+  color: var(--color-text-main);
+  /* 오른쪽 아래 모서리를 작게 해서 말풍선처럼 보이게 */
+  border-bottom-right-radius: 6px;
+}
+
+/* AI 메시지 버블 - 부드러운 녹색 계열 */
+.message-row.ai .message-bubble {
+  background-color: var(--color-ai-bubble);
+  border: 1px solid var(--color-ai-border);
+  color: var(--color-text-main);
+  /* 왼쪽 아래 모서리를 작게 해서 말풍선처럼 보이게 */
+  border-bottom-left-radius: 6px;
+}
+
+/* 에러 메시지 버블 */
+.message-bubble.error-bubble {
+  background-color: #fff5f5;
+  border-color: #fca5a5;
+  color: var(--color-error);
+}
+
+/* 메시지 전송 시간 표시 */
+.message-time {
+  font-size: 11px;
+  color: var(--color-text-placeholder);
+  padding: 0 4px;
+}
+
+
+/* ----------------------------------------------------------------
+   타이핑 인디케이터 스타일 (AI가 응답 생성 중일 때)
+   ---------------------------------------------------------------- */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px 12px;
+  /* 숨김 상태에서 보임 상태로의 전환 */
+  transition: opacity var(--transition-normal);
+}
+
+/* 타이핑 인디케이터 아바타 */
+.typing-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* 점 3개가 있는 타이핑 버블 */
+.typing-bubble {
+  background-color: var(--color-ai-bubble);
+  border: 1px solid var(--color-ai-border);
+  border-radius: var(--border-radius-bubble);
+  border-bottom-left-radius: 6px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 개별 타이핑 점 */
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  opacity: 0.5;
+  /* 각 점이 순서대로 위아래 움직이는 애니메이션 */
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+
+/* 각 점에 딜레이를 주어 순차적으로 움직이게 함 */
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* 타이핑 점 위아래 튀는 애니메이션 - 더 자연스러운 이징 */
+@keyframes typingBounce {
+  0%, 55%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.45;
+  }
+  28% {
+    transform: translateY(-7px) scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* 타이핑 안내 텍스트 */
+.typing-text {
+  font-size: 12px;
+  color: var(--color-text-sub);
+  font-style: italic;
+}
+
+/* 숨김 클래스 - JavaScript에서 display 제어 대신 사용 */
+.hidden {
+  display: none !important;
+}
+
+
+/* ================================================================
+   메시지 입력 영역 스타일
+   ================================================================ */
+.message-input-area {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: white;
+  border-top: 1px solid var(--color-border);
+  /* 입력창이 항상 화면 하단에 보이도록 sticky 설정 */
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* 초기화 버튼 */
+.reset-btn {
+  width: 44px;          /* 터치 타깃 최소 44px */
+  height: 44px;
+  border-radius: 50%;
+  background-color: white;
+  border: 1.5px solid var(--color-border);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.reset-btn:hover {
+  background-color: var(--color-primary-pale);
+  border-color: var(--color-primary);
+  /* 버튼 호버 시 회전 효과 */
+  transform: rotate(180deg);
+}
+
+/* 초기화 버튼 클릭 상태 */
+.reset-btn:active {
+  transform: rotate(180deg) scale(0.92);
+  background-color: #d1e7d7;
+}
+
+/* 텍스트 입력창 (textarea) */
+.message-input {
+  flex: 1;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text-main);
+  background-color: #fafafa;
+  resize: none; /* 수동 크기 조절 비활성화 */
+  outline: none;
+  /* 최소/최대 높이 설정 */
+  min-height: 44px;
+  max-height: 140px;
+  line-height: 1.6;
+  overflow-y: auto;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+              background-color var(--transition-fast);
+  /* 부드러운 스크롤 동작 */
+  scroll-behavior: smooth;
+}
+
+.message-input:focus {
+  border-color: var(--color-primary);
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+}
+
+.message-input::placeholder {
+  color: var(--color-text-placeholder);
+  /* 플레이스홀더 텍스트 줄바꿈 허용 */
+  white-space: pre-line;
+}
+
+/* 입력창 비활성화 상태 (AI 응답 대기 중) */
+.message-input:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* 전송 버튼 */
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  /* 활성화 상태와 비활성화 상태 전환을 위해 */
+  box-shadow: 0 2px 10px rgba(74, 124, 89, 0.35);
+}
+
+.send-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(74, 124, 89, 0.45);
+}
+
+.send-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* 전송 버튼 비활성화 상태 (AI 응답 대기 중) */
+.send-btn:disabled {
+  background-color: var(--color-border);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.6;
+}
+
+/* 전송 아이콘 */
+.send-icon {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* 하단 안내 문구 */
+.input-disclaimer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--color-text-placeholder);
+  padding: 6px 16px 12px;
+  line-height: 1.5;
+  background-color: white;
+}
+
+.input-disclaimer strong {
+  color: var(--color-text-sub);
+}
+
+
+/* ================================================================
+   반응형 스타일 - 모바일 화면 대응
+   ================================================================ */
+
+/* 태블릿 이하 (768px 이하) */
+@media (max-width: 768px) {
+  /* 페이지 전체 너비를 100%로 (좌우 여백 없음) */
+  .page-wrapper {
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  /* 헤더 패딩 줄이기 */
+  .header {
+    padding: 20px 16px;
+    gap: 14px;
+  }
+
+  .counselor-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .avatar-emoji {
+    font-size: 28px;
+  }
+
+  .site-title {
+    font-size: 18px;
+  }
+
+  .counselor-description {
+    font-size: 12px;
+  }
+
+  /* 채팅 영역 패딩 줄이기 */
+  .chat-messages {
+    padding: 16px 14px 8px;
+    max-height: calc(100vh - 360px);
+  }
+
+  /* 메시지 버블 최대 너비 늘리기 */
+  .message-content {
+    max-width: 85%;
+  }
+
+  /* 입력 영역 패딩 줄이기 */
+  .message-input-area {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .message-input {
+    font-size: 16px; /* iOS에서 자동 확대 방지 */
+    padding: 8px 12px;
+  }
+
+  /* 빠른 시작 버튼 크기 줄이기 */
+  .quick-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+/* 소형 모바일 (480px 이하) */
+@media (max-width: 480px) {
+  .header {
+    padding: 16px 14px;
+  }
+
+  .counselor-description {
+    display: none; /* 아주 작은 화면에서는 설명 숨기기 */
+  }
+
+  .chat-messages {
+    max-height: calc(100vh - 320px);
+  }
+
+  /* API 키 섹션 패딩 조정 */
+  .api-key-body {
+    padding: 0 14px 12px;
+  }
+
+  .api-key-actions {
+    flex-wrap: wrap;
+  }
+
+  .save-api-btn,
+  .delete-api-btn {
+    flex: 1;
+    text-align: center;
+  }
+}

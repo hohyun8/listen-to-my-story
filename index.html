@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 문자 인코딩 설정 - 한국어가 깨지지 않도록 UTF-8 사용 -->
+  <meta charset="UTF-8" />
+  <!-- 모바일 화면에서도 올바르게 표시되도록 뷰포트 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO 및 검색엔진 설명 메타 태그 -->
+  <meta name="description" content="AI 상담사 마음이와 함께하는 24시간 익명 심리 상담 서비스. 판단 없이 따뜻하게 당신의 이야기를 들어드려요." />
+  <meta name="theme-color" content="#4a7c59" />
+
+  <!-- 소셜 미디어 공유용 Open Graph 태그 -->
+  <meta property="og:title" content="내 이야기를 들어줘! - AI 심리 상담" />
+  <meta property="og:description" content="AI 상담사 마음이와 함께하는 24시간 익명 심리 상담. 판단 없이, 따뜻하게." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ko_KR" />
+
+  <title>내 이야기를 들어줘! - AI 심리 상담</title>
+  <!-- 외부 CSS 파일 연결 -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- =====================================================
+       전체 페이지를 감싸는 최상위 컨테이너
+       ===================================================== -->
+  <div class="page-wrapper">
+
+    <!-- ===================================================
+         헤더 영역: 상담사 소개 및 사이트 정보
+         =================================================== -->
+    <header class="header" role="banner">
+      <!-- 상담사 아바타 이미지 영역 -->
+      <div class="counselor-avatar" aria-hidden="true">
+        <!-- 이모지로 따뜻한 느낌의 상담사 아바타 표현 (장식용이므로 aria-hidden) -->
+        <span class="avatar-emoji">🌿</span>
+      </div>
+
+      <!-- 상담사 소개 텍스트 영역 -->
+      <div class="counselor-info">
+        <h1 class="site-title">내 이야기를 들어줘!</h1>
+        <p class="counselor-name">AI 상담사 마음이</p>
+        <p class="counselor-description">
+          언제든지 당신의 이야기를 들을 준비가 되어 있어요.<br />
+          판단 없이, 따뜻하게 함께할게요. 💚
+        </p>
+        <!-- 현재 상태 표시 배지 (항상 온라인) -->
+        <div class="status-badge" role="status" aria-label="서비스 운영 상태: 24시간 운영 중">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">24시간 함께해요</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===================================================
+         메인 콘텐츠 영역
+         =================================================== -->
+    <main class="main-content" id="main-content">
+
+      <!-- -------------------------------------------------
+           API 키 설정 섹션
+           사용자가 Gemini API 키를 입력하고 저장하는 영역
+           ------------------------------------------------- -->
+      <section class="api-key-section" id="apiKeySection" aria-label="API 키 설정">
+        <!-- 섹션 헤더 -->
+        <div class="api-key-header">
+          <span class="api-key-icon" aria-hidden="true">🔑</span>
+          <h2 class="api-key-title">API 키 설정</h2>
+          <!-- 접기/펼치기 버튼 - API 키가 저장된 후 섹션을 접을 수 있음 -->
+          <button
+            class="toggle-api-btn"
+            id="toggleApiBtn"
+            onclick="toggleApiSection()"
+            aria-expanded="true"
+            aria-controls="apiKeyBody"
+            title="접기/펼치기"
+          >
+            ▲
+          </button>
+        </div>
+
+        <!-- API 키 입력 폼 영역 (접기/펼치기 대상) -->
+        <div class="api-key-body" id="apiKeyBody" role="region" aria-label="API 키 입력 영역">
+          <!-- 안내 메시지 -->
+          <p class="api-key-guide">
+            Gemini API 키를 입력하면 상담을 시작할 수 있어요.<br />
+            API 키는 이 브라우저에만 저장되며, 외부로 전송되지 않아요.
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="api-link">
+              API 키 발급받기 →
+            </a>
+          </p>
+
+          <!-- API 키 입력창과 저장 버튼 -->
+          <div class="api-key-input-group">
+            <label for="apiKeyInput" class="sr-only">Gemini API 키 입력</label>
+            <input
+              type="password"
+              id="apiKeyInput"
+              class="api-key-input"
+              placeholder="여기에 Gemini API 키를 붙여넣으세요..."
+              autocomplete="off"
+              aria-describedby="apiStatusMessage"
+            />
+            <!-- 키 보이기/숨기기 버튼 -->
+            <button
+              class="show-key-btn"
+              id="showKeyBtn"
+              onclick="toggleKeyVisibility()"
+              aria-label="API 키 표시/숨기기"
+              title="API 키 표시/숨기기"
+            >
+              👁️
+            </button>
+          </div>
+
+          <!-- 저장 버튼과 삭제 버튼 -->
+          <div class="api-key-actions">
+            <button class="save-api-btn" onclick="saveApiKey()">
+              저장하기
+            </button>
+            <button class="delete-api-btn" onclick="deleteApiKey()">
+              삭제하기
+            </button>
+          </div>
+
+          <!-- API 키 상태 메시지 (저장됨/오류 등을 표시) -->
+          <!-- aria-live="polite": 내용이 바뀌면 스크린리더가 자동으로 읽어줌 -->
+          <p class="api-status-message" id="apiStatusMessage" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------
+           채팅 인터페이스 섹션
+           대화 메시지가 표시되는 핵심 영역
+           ------------------------------------------------- -->
+      <section class="chat-section" aria-label="대화 영역">
+
+        <!-- 채팅 메시지 표시 영역 -->
+        <!-- role="log": 메시지가 순차적으로 쌓이는 대화 로그임을 스크린리더에 알림 -->
+        <!-- aria-live="polite": 새 메시지가 추가되면 스크린리더가 읽어줌 -->
+        <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-label="마음이와의 대화">
+
+          <!-- 웰컴 메시지: 처음 화면에 표시되는 안내 메시지 -->
+          <div class="welcome-message" id="welcomeMessage">
+            <div class="welcome-icon" aria-hidden="true">🌸</div>
+            <h3 class="welcome-title">안녕하세요, 잘 오셨어요</h3>
+            <p class="welcome-text">
+              오늘 어떤 하루를 보내셨나요?<br />
+              무슨 이야기든 편하게 꺼내놓으세요.<br />
+              마음이가 함께 들을게요.
+            </p>
+            <!-- 빠른 시작 버튼들 - 자주 사용하는 대화 주제 -->
+            <nav class="quick-start-buttons" aria-label="빠른 대화 시작">
+              <button class="quick-btn" onclick="quickStart('오늘 너무 힘든 하루였어요.')">
+                힘든 하루
+              </button>
+              <button class="quick-btn" onclick="quickStart('요즘 많이 불안해요.')">
+                불안함
+              </button>
+              <button class="quick-btn" onclick="quickStart('마음이 답답하고 외로워요.')">
+                외로움
+              </button>
+              <button class="quick-btn" onclick="quickStart('그냥 누군가에게 이야기하고 싶어요.')">
+                그냥 이야기하고 싶어
+              </button>
+            </nav>
+          </div>
+
+        </div>
+        <!-- 채팅 메시지 영역 끝 -->
+
+        <!-- 타이핑 인디케이터: AI가 응답을 생성하는 동안 표시 -->
+        <!-- 기본적으로 숨겨져 있다가, AI 응답 대기 중에만 나타남 -->
+        <!-- aria-label: 스크린리더에서 "마음이가 응답을 작성하고 있습니다"로 읽힘 -->
+        <div class="typing-indicator hidden" id="typingIndicator" role="status" aria-label="마음이가 응답을 작성하고 있어요">
+          <div class="typing-avatar" aria-hidden="true">🌿</div>
+          <div class="typing-bubble" aria-hidden="true">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+          <span class="typing-text">마음이가 생각하고 있어요...</span>
+        </div>
+
+      </section>
+      <!-- 채팅 섹션 끝 -->
+
+      <!-- -------------------------------------------------
+           메시지 입력 영역
+           사용자가 메시지를 작성하고 전송하는 영역
+           ------------------------------------------------- -->
+      <div class="message-input-area" role="group" aria-label="메시지 입력">
+
+        <!-- 대화 초기화 버튼 -->
+        <button
+          class="reset-btn"
+          id="resetBtn"
+          onclick="resetChat()"
+          aria-label="대화 초기화"
+          title="대화 초기화"
+        >
+          <span aria-hidden="true">🔄</span>
+        </button>
+
+        <!-- 메시지 입력창 -->
+        <!-- aria-label: 스크린리더가 이 입력창의 목적을 설명함 -->
+        <textarea
+          id="messageInput"
+          class="message-input"
+          placeholder="마음속 이야기를 편하게 적어주세요... (Enter로 전송, Shift+Enter로 줄바꿈)"
+          rows="1"
+          maxlength="2000"
+          aria-label="마음이에게 전할 메시지"
+          aria-multiline="true"
+        ></textarea>
+
+        <!-- 전송 버튼 -->
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" aria-label="메시지 전송">
+          <span class="send-icon" aria-hidden="true">→</span>
+        </button>
+
+      </div>
+
+      <!-- 입력 영역 하단 안내 문구 -->
+      <!-- role="contentinfo"를 footer 대신 p 태그에 쓰지 않고 아래에 footer를 별도로 추가 -->
+      <p class="input-disclaimer">
+        이 서비스는 전문적인 심리 치료를 대체하지 않습니다.
+        위기 상황이라면 <strong>정신건강 위기상담 전화 1577-0199</strong>로 연락하세요.
+      </p>
+
+    </main>
+    <!-- 메인 콘텐츠 끝 -->
+
+  </div>
+  <!-- 페이지 래퍼 끝 -->
+
+  <!-- 외부 JavaScript 파일 연결 -->
+  <!-- body 맨 아래에 배치하여 HTML이 모두 로드된 후 JS가 실행되도록 함 -->
+  <script src="app.js"></script>
+
+</body>
+</html>
